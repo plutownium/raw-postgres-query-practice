@@ -13,8 +13,22 @@ public class HighlightSQLMaker {
                 ");");
     }
 
+    public String addHighlight(Integer guestId, Integer bookId, String text) {
+        return String.format("INSERT INTO Highlights (highlight, guest_id, book_id) " +
+                " VALUES ('%s', %s, %s) RETURNING id;", text, guestId, bookId);
+    }
+
+    public String getAllForGuest(Integer guestId) {
+        return String.format("SELECT * FROM Highlights WHERE guest_id = %s;", guestId);
+    }
+
     public String count() {
         return "SELECT count(*) AS exact_count FROM Highlights;";
+    }
+
+    public String countChars() {
+        return "SELECT SUM(length(highlight)) AS total_characters " +
+                "FROM Highlights;";
     }
 
     public String deleteAll() {

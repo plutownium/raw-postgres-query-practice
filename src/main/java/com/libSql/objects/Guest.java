@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.libSql.SQLQueriesTool;
+import com.libSql.extractor.HighlightExtractor;
 import com.libSql.sqlMaker.BookSQLMaker;
 import com.libSql.sqlMaker.GuestSQLMaker;
 import com.libSql.sqlMaker.HighlightSQLMaker;
@@ -72,6 +73,10 @@ public class Guest {
         this.borrowedBookId = id;
     }
 
+    private Integer getBorrowedBookId() {
+        return this.borrowedBookId;
+    }
+
     private SQLQueriesTool getPg() {
         return this.pg;
     }
@@ -87,11 +92,23 @@ public class Guest {
         return id;
     }
 
-    public void addHighlight(String highlight) {
+    public void addHighlight(String highlightText) throws SQLException {
         // only works if the guest has a book! or else how can they add the highlight?
         boolean hasRentedBook = this.borrowedBookId != null;
         if (hasRentedBook) {
             HighlightSQLMaker highlightTool = new HighlightSQLMaker();
+            String highlightUpdate = highlightTool.addHighlight(this.getId(), this.getBorrowedBookId(), highlightText);
+            this.getPg().operateUpdate(highlightUpdate);
         }
+    }
+
+    public Highlight[] getHighlights() throws SQLException {
+        //
+        System.out.println("hi");
+        HighlightSQLMaker highlightTool = new HighlightSQLMaker();
+        String highlightsQuery = highlightTool.getAllForGuest(this.getId());
+        ResultSet highlights = this.getPg().operate(highlightsQuery);
+        Highlight[] extracted = new HighlightExtractor().extract(highlights);
+        return extracted;
     }
 }

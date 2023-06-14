@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import com.libSql.objects.Author;
 import com.libSql.objects.Book;
 import com.libSql.objects.Guest;
+import com.libSql.objects.Highlight;
 import com.libSql.sqlMaker.AuthorSQLMaker;
 import com.libSql.sqlMaker.AuthorshipSQLMaker;
 import com.libSql.sqlMaker.BookSQLMaker;
@@ -24,6 +25,7 @@ public class Main {
 
         SQLQueriesTool pg = new SQLQueriesTool();
         pg.connect();
+        System.out.println("Connected");
 
         RowReader reader = new RowReader();
         BookSQLMaker bookTool = new BookSQLMaker();
@@ -68,6 +70,9 @@ public class Main {
             ResultSet allBooks = pg.operate(allBooksQuery);
             // reader.printValuableText(allAuthors2);
             // reader.printValuableText(allBooks2);
+            // **
+            //
+            // **
             String booksForAuthor = bookTool.getBooksForAuthorWithBookDetails(alexanderId);
             mostRecentQuery = booksForAuthor;
             ResultSet alexBooks = pg.operate(booksForAuthor);
@@ -82,12 +87,16 @@ public class Main {
             Guest catherine = new Guest(pg, "Catherine");
             Guest stephanie = new Guest(pg, "Stephanie");
             // make Guests have a favorite author - Done
+            System.out.println("==============");
+            System.out.println(perryId);
+            System.out.println("==============");
+
             Guest jared = new Guest(pg, "Jared").addFavoriteAuthor(brutusId);
             Guest frodo = new Guest(pg, "Frodo").addFavoriteAuthor(alexanderId);
             Guest ferry = new Guest(pg, "Ferry").addFavoriteAuthor(alexanderId);
             Guest jeremiah = new Guest(pg, "Jeremiah").addFavoriteAuthor(perryId);
-            // make Guests have Books, as in guests of the library.
-            // add guests, and distribute books amongst the guests.
+//            // make Guests have Books, as in guests of the library.
+//            // add guests, and distribute books amongst the guests.
             Book[] availableBooks = BookExtractor.extract(allBooks);
             Guest[] guests = new Guest[6];
             guests[0] = catherine;
@@ -127,27 +136,37 @@ public class Main {
             // retrieve all highlights for a guest.
             Highlight[] highlightsForCatherine = catherine.getHighlights();
             Highlight[] highlightsForSteph = stephanie.getHighlights();
-            reader.printValuableText(highlightsForCatherine);
-            reader.printValuableText(highlightsForSteph);
+            System.out.println(highlightsForCatherine);
+            System.out.println(highlightsForSteph);
 
             // retrieve all books with multiple highlights.
-            Book[] withMultipleHighlights = pg.operate(bookTool.getBooksWithMinimumHighlights(2));
-            reader.printValuableText(withMultipleHighlights);
+//            Book[] withMultipleHighlights = pg.operate(bookTool.getBooksWithMinimumHighlights(2));
+//            for (int a = 0; a < withMultipleHighlights.length; a++) {
+//                System.out.println(withMultipleHighlights[a]);
+//            }
 
             // retrieve all authors with multiple books.
-            Author[] withMultipleBooks = pg.operate(authorTool.getAuthorsWithMultipleBooks());
-            reader.printValuableText(withMultipleBooks);
+//            Author[] withMultipleBooks = pg.operate(authorTool.getAuthorsWithMultipleBooks());
+//            for (int i = 0; i < withMultipleBooks.length; i++) {
+//                System.out.println(withMultipleBooks[i]);
+//            }
+
 
             // count the chars in the highlights
-            Integer totalCharsInAllHighlights = pg.operate(highlightsTool.countChars());
+            ResultSet chars = pg.operate(highlightsTool.countChars());
+//            Integer totalCharsInAllHighlights =
+            System.out.println(chars);
+
+//            System.out.println(totalCharsInAllHighlights);
 
             // count the # of book published in the 21st century
-            String countRecentBooksQuery = pg.operate(bookTool.countBooksAfterYear(1999));
-
+            // TODO
+//            String countRecentBooksQuery = pg.operate(bookTool.countBooksAfterYear(1999));
+//            System.out.println(countRecentBooksQuery);
 
 
             // get one of the 1 to 1 relations and get the association via the associated id
-            // add a many to many relationship
+            // add a many-to-many relationship
         } catch (SQLException e) {
 
             printer.prettyRed("\n\nSomething went wrong in the main func.");
@@ -158,6 +177,83 @@ public class Main {
 
         pg.disconnect();
         System.out.println("Disconnected connection.");
+    }
+}
+
+
+
+class StartupInitializer {
+    public static void initialize(SQLQueriesTool pg, BookSQLMaker bookTool, AuthorSQLMaker authorTool, AuthorshipSQLMaker authorshipsTool, GuestSQLMaker guestsTool, HighlightSQLMaker highlightsTool) {
+        String lastQuery = "";
+        PrettyPrinter printer = new PrettyPrinter();
+
+        try {
+            String makeAuthorTableQuery = authorTool.createAuthorTableIfNotExists();
+            String makeBookTableQuery = bookTool.createBookTableIfNotExists();
+            String makeAuthorshipsTableQuery = authorshipsTool.createAuthorshipTableIfNotExists();
+            String makeGuestsTableQuery = guestsTool.createGuestTableIfNotExists();
+            String makeHighlightsTableQuery = highlightsTool.createHighlightTableIfNotExists();
+
+            lastQuery = makeBookTableQuery;
+            pg.operateUpdate(makeAuthorTableQuery);
+            lastQuery = makeAuthorTableQuery;
+            pg.operateUpdate(makeBookTableQuery);
+            lastQuery = makeAuthorshipsTableQuery;
+            pg.operateUpdate(makeAuthorshipsTableQuery);
+            lastQuery = makeGuestsTableQuery;
+            pg.operateUpdate(makeGuestsTableQuery);
+            lastQuery = makeHighlightsTableQuery;
+            pg.operateUpdate(makeHighlightsTableQuery);
+            // count rows
+            RowReader reader = new RowReader();
+            String c1 = bookTool.count();
+            String c2 = authorTool.count();
+            String c3 = authorshipsTool.count();
+            String c4 = guestsTool.count();
+            String c5 = highlightsTool.count();
+
+            lastQuery = c1;
+            ResultSet booksCountQuery = pg.operate(c1);
+            ResultSet authorsCountQuery = pg.operate(c2);
+            ResultSet authorshipsCountQuery = pg.operate(c3);
+            ResultSet guestsCountQuery = pg.operate(c4);
+            ResultSet highlightsCountQuery = pg.operate(c5);
+            Integer booksCount = reader.extractCount(booksCountQuery);
+            Integer authorsCount = reader.extractCount(authorsCountQuery);
+            Integer authorshipsCount = reader.extractCount(authorshipsCountQuery);
+            Integer guestsCount = reader.extractCount(guestsCountQuery);
+            Integer highlightsCount = reader.extractCount(highlightsCountQuery);
+            //
+            //
+            // System.out.println(booksCount);
+            // System.out.println(authorsCount);
+            // if (booksCount > 0) {
+            String deleteAllBooks = bookTool.deleteAll();
+            lastQuery = deleteAllBooks;
+            pg.operateUpdate(deleteAllBooks);
+            // System.exit(0);
+            // } else {
+            // System.out.println("No books...");
+            // }
+            // if (authorsCount > 0) {
+            String deleteAllAuthors = authorTool.deleteAll();
+            lastQuery = deleteAllAuthors;
+            pg.operateUpdate(deleteAllAuthors);
+            String deleteAllLinks = authorshipsTool.deleteAll();
+            lastQuery = deleteAllLinks;
+            pg.operateUpdate(deleteAllLinks);
+            // } else {
+            // System.out.println("No authors...");
+            // }
+            pg.operateUpdate(guestsTool.deleteAll());
+            pg.operateUpdate(highlightsTool.deleteAll());
+        } catch (SQLException e) {
+            printer.prettyRed("initializing error.");
+            printer.prettyYellow(lastQuery);
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            System.out.println("\nerror over\n==========\n");
+        }
     }
 }
 

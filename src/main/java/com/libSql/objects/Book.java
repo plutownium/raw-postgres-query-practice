@@ -41,6 +41,7 @@ public class Book {
         this.id = id;
         this.name = name;
         this.year = published;
+        this.rented = rented;
     }
 
     private void setBook(ResultSet book) {

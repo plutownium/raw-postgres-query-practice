@@ -19,7 +19,7 @@ public class BookExtractor {
             String title = "";
             Integer year = 0;
             Integer id = 0;
-            Boolean rented = null;
+            Boolean rented = false;
             for (int i = 1; i <= columnCount; i++) {
                 String columnValue = rs.getString(i);
                 String colName = rsmd.getColumnName(i);
@@ -30,9 +30,14 @@ public class BookExtractor {
                 } else if (colName == "id") {
                     id = Integer.parseInt(columnValue);
                 } else if (colName == "rented") {
-                    rented = Boolean.parseBoolean(columnValue);
+                    System.out.println(columnValue);
+                    if (columnValue == null) {
+                        rented = false;
+                    } else {
+                        rented = Boolean.parseBoolean(columnValue);
+                    }
                 }
-                // goal: fin dout what this prints
+
             }
             Book newBook = new Book(id, title, year, rented);
             found.add(newBook);

@@ -1,5 +1,19 @@
 package com.libSql.objects;
 
-public class Highlight {
+import java.sql.SQLException;
 
+public class Highlight {
+//new Highlight(highlightId, highlightText, guestId, bookId);
+
+    private Integer id;
+    private String text;
+    private Integer guestId;
+    private Integer bookId;
+// for creating highlights that already exist in the db
+    public Highlight(Integer id, String highlight, Integer guestId, Integer bookId) {
+        this.id = id;
+        this.text = highlight;
+        this.guestId = guestId;
+        this.bookId = bookId;
+    }
 }
