@@ -29,10 +29,6 @@ public class Guest {
         Integer startingCheckouts = 0;
         String query = guestTool.createGuest(name, startingCheckouts);
         System.out.println(query);
-        System.out.println(query);
-        System.out.println(query);
-        System.out.println(query);
-        System.out.println(query);
         ResultSet guest = pg.operate(query);
         this.setGuest(guest);
         this.setPg(pg);
@@ -47,6 +43,7 @@ public class Guest {
 
     public void rentBook(Book book) throws SQLException {
         BookSQLMaker bookTool = new BookSQLMaker();
+        System.out.println(book);
         String markRentedQuery = bookTool.rentBookToGuest(book.getId()); // mark book rented
         this.getPg().operateUpdate(markRentedQuery);
         //
@@ -110,5 +107,10 @@ public class Guest {
         ResultSet highlights = this.getPg().operate(highlightsQuery);
         Highlight[] extracted = new HighlightExtractor().extract(highlights);
         return extracted;
+    }
+
+    public String toString() {
+        return String.format("Guest {name: %s, checkouts: %s, favoriteAuthorId: %s }",
+                name, checkouts, favoriteAuthorId);
     }
 }

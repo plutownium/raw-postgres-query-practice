@@ -75,8 +75,8 @@ public class SQLQueriesTool {
         statement = connection.createStatement();
         System.out.println("Executing: " + query);
         ResultSet resultSet = statement.executeQuery(query);
-        System.out.println("Here is resultset:");
-        System.out.println(resultSet);
+//        System.out.println("Here is resultset:");
+//        System.out.println(resultSet);
         return resultSet;
     }
 

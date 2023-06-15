@@ -14,12 +14,23 @@ public class Author {
     private ResultSet author;
     private Integer id;
 
+    private String name;
+
+    private Integer age;
+
     public Author(SQLQueriesTool pg, String fn, Integer age) throws SQLException {
         AuthorSQLMaker authorTool = new AuthorSQLMaker();
 
         String query = authorTool.createAuthor(fn, age);
         ResultSet author = pg.operate(query);
         this.setAuthor(author);
+    }
+
+    // for creating authors that already exist in the db
+    public Author(Integer id, String name, Integer age)  {
+        this.id = id;
+        this.name = name;
+        this.age = age;
     }
 
     private void setAuthor(ResultSet author) {
@@ -39,5 +50,10 @@ public class Author {
         Integer id = Integer.parseInt(stringId);
         this.setId(id);
         return id;
+    }
+
+    public String toString() {
+        return String.format("Author {name: %s, id: %s }",
+                "null!", id);
     }
 }

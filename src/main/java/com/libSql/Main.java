@@ -1,9 +1,11 @@
 package com.libSql;
 
+import java.util.Arrays;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+
 
 import com.libSql.objects.Author;
 import com.libSql.objects.Book;
@@ -15,6 +17,7 @@ import com.libSql.sqlMaker.BookSQLMaker;
 import com.libSql.sqlMaker.GuestSQLMaker;
 import com.libSql.sqlMaker.HighlightSQLMaker;
 import com.libSql.extractor.BookExtractor;
+import com.libSql.extractor.AuthorExtractor;
 import com.libSql.SQLQueriesTool;
 
 
@@ -61,9 +64,9 @@ public class Main {
             new Book(pg, "The Six Seas", brutusId, 1783).addAuthor(sarahId);
 
             // // get all authors
-            String allAuthors = authorTool.getAllAuthors();
-            mostRecentQuery = allAuthors;
-            // ResultSet allAuthors2 = pg.operate(allAuthors);
+            String allAuthorsQuery = authorTool.getAllAuthors();
+            mostRecentQuery = allAuthorsQuery;
+             ResultSet allAuthors = pg.operate(allAuthorsQuery);
             // // get all books
             String allBooksQuery = bookTool.getAllBooks();
             mostRecentQuery = allBooksQuery;
@@ -87,17 +90,34 @@ public class Main {
             Guest catherine = new Guest(pg, "Catherine");
             Guest stephanie = new Guest(pg, "Stephanie");
             // make Guests have a favorite author - Done
-            System.out.println("==============");
+            System.out.println("=============#####=");
             System.out.println(perryId);
-            System.out.println("==============");
+            System.out.println("=============######=");
 
+            System.out.println("94");
+            Author[] currentAuthors = AuthorExtractor.extract(allAuthors);
+            for (int i = 0; i < currentAuthors.length; i++) {
+                System.out.println(currentAuthors[i].toString());
+            }
+            System.out.println(Arrays.toString(currentAuthors));
+            // todo: check all authors and their ids and see if its right when the addFaveAuthor thing is called.
+            // todo: suspect there is some integer foolery going on. author into db as 5 and somehow turns into 6
             Guest jared = new Guest(pg, "Jared").addFavoriteAuthor(brutusId);
+            System.out.println("Jared 94");
+
             Guest frodo = new Guest(pg, "Frodo").addFavoriteAuthor(alexanderId);
+            System.out.println("Frodo 94");
             Guest ferry = new Guest(pg, "Ferry").addFavoriteAuthor(alexanderId);
+            System.out.println("Ferry 94");
+            System.out.println(ferry);
             Guest jeremiah = new Guest(pg, "Jeremiah").addFavoriteAuthor(perryId);
+            System.out.println("Jeremiah 99");
+            System.out.println(jeremiah);
 //            // make Guests have Books, as in guests of the library.
 //            // add guests, and distribute books amongst the guests.
             Book[] availableBooks = BookExtractor.extract(allBooks);
+            System.out.println("101");
+            System.out.println(Arrays.toString(availableBooks));
             Guest[] guests = new Guest[6];
             guests[0] = catherine;
             guests[1] = stephanie;
@@ -107,15 +127,20 @@ public class Main {
             guests[5] = jeremiah;
             int j = 0;
             for (int i = 0; i < availableBooks.length; i++) {
+                System.out.println("110");
                 Book toAssign = availableBooks[i];
+                System.out.println(String.valueOf(toAssign));
                 Guest guestRentingBook = guests[j];
+                System.out.println("114");
                 j++;
                 guestRentingBook.rentBook(toAssign);
+                System.out.println("117");
                 if (j > guests.length) {
                     break;
                 }
             }
             // make Books have Highlights, and Highlights have Books and Users
+            System.out.println("123");
             // add 15 highlights among 5 books among 8 guests.
             catherine.addHighlight("a sentence!");
             catherine.addHighlight("Another sentence!");
@@ -206,23 +231,23 @@ class StartupInitializer {
             pg.operateUpdate(makeHighlightsTableQuery);
             // count rows
             RowReader reader = new RowReader();
-            String c1 = bookTool.count();
-            String c2 = authorTool.count();
-            String c3 = authorshipsTool.count();
-            String c4 = guestsTool.count();
-            String c5 = highlightsTool.count();
-
-            lastQuery = c1;
-            ResultSet booksCountQuery = pg.operate(c1);
-            ResultSet authorsCountQuery = pg.operate(c2);
-            ResultSet authorshipsCountQuery = pg.operate(c3);
-            ResultSet guestsCountQuery = pg.operate(c4);
-            ResultSet highlightsCountQuery = pg.operate(c5);
-            Integer booksCount = reader.extractCount(booksCountQuery);
-            Integer authorsCount = reader.extractCount(authorsCountQuery);
-            Integer authorshipsCount = reader.extractCount(authorshipsCountQuery);
-            Integer guestsCount = reader.extractCount(guestsCountQuery);
-            Integer highlightsCount = reader.extractCount(highlightsCountQuery);
+//            String c1 = bookTool.count();
+//            String c2 = authorTool.count();
+//            String c3 = authorshipsTool.count();
+//            String c4 = guestsTool.count();
+//            String c5 = highlightsTool.count();
+//
+//            lastQuery = c1;
+//            ResultSet booksCountQuery = pg.operate(c1);
+//            ResultSet authorsCountQuery = pg.operate(c2);
+//            ResultSet authorshipsCountQuery = pg.operate(c3);
+//            ResultSet guestsCountQuery = pg.operate(c4);
+//            ResultSet highlightsCountQuery = pg.operate(c5);
+//            Integer booksCount = reader.extractCount(booksCountQuery);
+//            Integer authorsCount = reader.extractCount(authorsCountQuery);
+//            Integer authorshipsCount = reader.extractCount(authorshipsCountQuery);
+//            Integer guestsCount = reader.extractCount(guestsCountQuery);
+//            Integer highlightsCount = reader.extractCount(highlightsCountQuery);
             //
             //
             // System.out.println(booksCount);

@@ -16,4 +16,9 @@ public class Highlight {
         this.guestId = guestId;
         this.bookId = bookId;
     }
+
+    public String toString() {
+        return String.format("Highlight {id: %s, text: %s, guestId: %s, bookId: %s }",
+                id, text, guestId, bookId);
+    }
 }

@@ -23,19 +23,21 @@ public class BookExtractor {
             for (int i = 1; i <= columnCount; i++) {
                 String columnValue = rs.getString(i);
                 String colName = rsmd.getColumnName(i);
-                if (colName == "title") {
+                if (colName.equals("title")) {
                     title = columnValue;
-                } else if (colName == "year") {
+                } else if (colName.equals("year")) {
                     year = Integer.parseInt(columnValue);
-                } else if (colName == "id") {
+                } else if (colName.equals("id")) {
                     id = Integer.parseInt(columnValue);
-                } else if (colName == "rented") {
+                } else if (colName.equals("rented")) {
                     System.out.println(columnValue);
                     if (columnValue == null) {
                         rented = false;
                     } else {
                         rented = Boolean.parseBoolean(columnValue);
                     }
+                } else {
+                    System.out.println("Unexpected:" + columnValue + " ::from col:: " + colName);
                 }
 
             }

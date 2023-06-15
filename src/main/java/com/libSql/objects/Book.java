@@ -37,7 +37,7 @@ public class Book {
     }
 
     // for creating books that already exist in the db
-    public Book(Integer id, String name, Integer published, boolean rented) throws SQLException {
+    public Book(Integer id, String name, Integer published, boolean rented)  {
         this.id = id;
         this.name = name;
         this.year = published;
@@ -80,5 +80,10 @@ public class Book {
         ResultSet linked = pg.operate(bookTool.getBooksForAuthor(authorId));
         this.setBook(linked);
 
+    }
+
+    public String toString() {
+        return String.format("Book {name: %s, authorId: %s, name: %s, rented: %s }",
+                name, authorId, name, rented);
     }
 }
