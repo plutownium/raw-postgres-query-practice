@@ -39,12 +39,8 @@ public class AuthorExtractor {
         }
 
         // turn the arraylist into an array so I don't have to import arrayList everywhere.
-//        Author[] foundAuthors = new Author[found.size()];
-                Author[] foundAuthors = new Author[found.size()];
+        Author[] foundAuthors = new Author[found.size()];
         foundAuthors = found.toArray(foundAuthors);
-//        for (int i = 0; i < found.size(); i++) {
-//            foundAuthors[i] = found[i];
-//        }
         return foundAuthors;
     }
 }

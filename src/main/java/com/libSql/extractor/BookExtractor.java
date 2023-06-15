@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 
+import com.libSql.objects.Author;
 import com.libSql.objects.Book;
 
 public class BookExtractor {
@@ -30,7 +31,7 @@ public class BookExtractor {
                 } else if (colName.equals("id")) {
                     id = Integer.parseInt(columnValue);
                 } else if (colName.equals("rented")) {
-                    System.out.println(columnValue);
+                    System.out.println("in rented:" + columnValue + " ::from col:: " + colName);
                     if (columnValue == null) {
                         rented = false;
                     } else {
@@ -45,8 +46,9 @@ public class BookExtractor {
             found.add(newBook);
         }
 
-        // turn the arraylist into an array so I don't have to import arrayList everywhere.
         Book[] foundBooks = new Book[found.size()];
+        foundBooks = found.toArray(foundBooks);
+
         return foundBooks;
     }
 }

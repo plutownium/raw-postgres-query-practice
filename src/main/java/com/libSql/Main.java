@@ -39,7 +39,6 @@ public class Main {
         StartupInitializer.initialize(pg, bookTool, authorTool, authorshipsTool, guestsTool, highlightsTool);
         // let's make 3 authors, 1, 2 and 3 books each
 
-        String mostRecentQuery = "";
         try {
             Integer alexanderId = new Author(pg, "Alexander", 33).getId();
             Integer perryId = new Author(pg, "Perry", 18).getId();
@@ -65,11 +64,9 @@ public class Main {
 
             // // get all authors
             String allAuthorsQuery = authorTool.getAllAuthors();
-            mostRecentQuery = allAuthorsQuery;
              ResultSet allAuthors = pg.operate(allAuthorsQuery);
             // // get all books
             String allBooksQuery = bookTool.getAllBooks();
-            mostRecentQuery = allBooksQuery;
             ResultSet allBooks = pg.operate(allBooksQuery);
             // reader.printValuableText(allAuthors2);
             // reader.printValuableText(allBooks2);
@@ -77,12 +74,10 @@ public class Main {
             //
             // **
             String booksForAuthor = bookTool.getBooksForAuthorWithBookDetails(alexanderId);
-            mostRecentQuery = booksForAuthor;
             ResultSet alexBooks = pg.operate(booksForAuthor);
             System.out.println("here are alex's books");
             reader.printValuableText(alexBooks); // Expect Alexander to have 5 books!
             String booksForSarah = bookTool.getBooksForAuthorWithBookDetails(sarahId);
-            mostRecentQuery = booksForSarah;
             ResultSet sarahsBooks = pg.operate(booksForSarah);
             reader.printValuableText(sarahsBooks); // works - sarah has 2 books
 
@@ -195,7 +190,6 @@ public class Main {
         } catch (SQLException e) {
 
             printer.prettyRed("\n\nSomething went wrong in the main func.");
-            printer.prettyYellow(mostRecentQuery);
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
